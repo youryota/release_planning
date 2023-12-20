@@ -52,6 +52,7 @@ class MainScene extends Phaser.Scene {
                 this.hanako.setVelocityX(0);// 横方向の速度を0
                 this.hanako.setVelocityY(0);// 縦方向の速度を0
             }
+            
     }
 }
 
