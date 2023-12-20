@@ -11,8 +11,8 @@ class MainScene extends Phaser.Scene {
        this.load.image('background', 'assets/back.png');
        this.load.image('taro', 'assets/taro.png');
        this.load.image('hanako', 'assets/hanako.png');
-       this.load.image('apple', 'assets/apple.png');
-       this.load.image('orange', 'assets/orange.png');
+       this.load.image('apple', 'assets/APPLE.png');
+       this.load.image('orange', 'assets/ORANGE.png');
    }
    // シーン初期化処理
    create() {
