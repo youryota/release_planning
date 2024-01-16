@@ -1,10 +1,12 @@
-// 他のJSファイルから呼び出された場合はシーンを返す
 class MainScene extends Phaser.Scene {
     // コンストラクタ
     constructor() {
         // 継承した「Phaser.Scene」クラスのコンストラクタの呼び出し
         super('MainScene');
+        // クラスメンバーとしてfruitsカウンターを初期化
+        this.fruits = 0;
     }
+
     // シーンの事前読み込み処理
     preload() {
         // 画像の読み込み(使用する時の名前, パス)
@@ -22,26 +24,46 @@ class MainScene extends Phaser.Scene {
    const hanako = this.physics.add.sprite(400, 400, 'hanako')
    this.taro = taro
    this.hanako = hanako
-let staticGroup = this.physics.add.staticGroup();
-for (let i = 0; i < 6; i++) {
-    let randx = Phaser.Math.Between(25, 775);
-    let randy = Phaser.Math.Between(25, 425);
-    staticGroup.create(randx, randy, 'apple');
-}
-for (let i = 0; i < 6; i++) {
-    let randxx = Phaser.Math.Between(25, 775);
-    let randyy = Phaser.Math.Between(25, 425);
-    staticGroup.create(randxx, randyy, 'orange');
-}
-this.physics.add.overlap(taro, staticGroup, collectFruits, null, this);
-        function collectFruits(p,apple){
-            this.physics.pause();
+    // クラスメンバーとしてfruitsカウンターを初期化
+   this.fruits = 0;
+   
+    let staticGroup = this.physics.add.staticGroup();
+        for (let i = 0; i < 6; i++) {
+            let randx = Phaser.Math.Between(25, 775);
+            let randy = Phaser.Math.Between(25, 425);
+            staticGroup.create(randx, randy, 'apple');
         }
-this.physics.add.overlap(hanako, staticGroup, collectFruits, null, this);
-        function collectFruits(p,apple){
-            this.physics.pause();
+        for (let i = 0; i < 6; i++) {
+            let randxx = Phaser.Math.Between(25, 775);
+            let randyy = Phaser.Math.Between(25, 425);
+            staticGroup.create(randxx, randyy, 'orange');
         }
+
+        this.physics.add.overlap(hanako, staticGroup, this.collectFruits, null, this);
+// this.physics.add.overlap(taro, staticGroup, collectFruits, null, this);
+//         function collectFruits(p,apple){
+//             this.physics.pause();
+//         }
+// this.physics.add.overlap(hanako, staticGroup, collectFruits, null, this);
+//         function collectFruits(p,apple){
+//             this.physics.pause();
+        //}
    }
+   // クラスメソッドとしてcollectFruitsを定義
+   collectFruits(hanako, fruit) {
+    // 敵を消す
+    fruit.destroy();
+
+    // カウンターを増やす
+    this.fruits++;
+
+    // カウンターが10になったらゲームを停止
+    if (this.fruits === 10) {
+        this.add.text(400, 200, 'CLEAR', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+        this.physics.pause();
+    }
+}
+
      // 毎フレーム実行される繰り返し処理
         update() {
             // キーボードの情報を取得
