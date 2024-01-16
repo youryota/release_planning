@@ -5,6 +5,8 @@ class MainScene extends Phaser.Scene {
         super('MainScene');
         // クラスメンバーとしてfruitsカウンターを初期化
         this.fruits = 0;
+        // 残り時間カウンターの初期値を設定
+        this.timecount = 10000;
     }
 
     // シーンの事前読み込み処理
@@ -27,6 +29,9 @@ class MainScene extends Phaser.Scene {
     // クラスメンバーとしてfruitsカウンターを初期化
    this.fruits = 0;
    
+   // 残り時間表示用のテキストを追加
+   this.timeText = this.add.text(50, 50, 'Time: ' + Math.ceil(this.timecount / 1000), { fontSize: '24px', fill: '#fff' });
+
     let staticGroup = this.physics.add.staticGroup();
         for (let i = 0; i < 6; i++) {
             let randx = Phaser.Math.Between(25, 775);
@@ -40,6 +45,9 @@ class MainScene extends Phaser.Scene {
         }
 
         this.physics.add.overlap(hanako, staticGroup, this.collectFruits, null, this);
+         // ゲームオーバー判定用のoverlapイベントを追加
+         this.physics.add.overlap(hanako, staticGroup, this.collectFruits, null, this);
+         this.physics.add.overlap(taro, staticGroup, this.gameOver, null, this);
 // this.physics.add.overlap(taro, staticGroup, collectFruits, null, this);
 //         function collectFruits(p,apple){
 //             this.physics.pause();
@@ -63,32 +71,48 @@ class MainScene extends Phaser.Scene {
         this.physics.pause();
     }
 }
-
-     // 毎フレーム実行される繰り返し処理
-        update() {
-            // キーボードの情報を取得
-            let cursors = this.input.keyboard.createCursorKeys();
-            if(cursors.up.isDown){
-                console.log("Up!!");
-                this.taro.setVelocityY(-300);// 上方向の速度を設定
-                this.hanako.setVelocityY(300);// 上方向の速度を設定
-            } else if(cursors.down.isDown){
-                console.log("down!!");
-                this.taro.setVelocityY(300);// 下方向の速度を設定
-                this.hanako.setVelocityY(-300);// 下方向の速度を設定
-            }else if(cursors.left.isDown){
-                console.log("Left");
-                this.taro.setVelocityX(-300);// 左方向の速度を設定
-                this.hanako.setVelocityX(300);// 左方向の速度を設定
-            }else if(cursors.right.isDown){
-                console.log("Right!!");
-                this.taro.setVelocityX(300);// 右方向の速度を設定
-                this.hanako.setVelocityX(-300);// 右方向の速度を設定
-            }else{
-                this.taro.setVelocityX(0);// 横方向の速度を0
-                this.taro.setVelocityY(0);// 縦方向の速度を
-                this.hanako.setVelocityX(0);// 横方向の速度を0
-                this.hanako.setVelocityY(0);// 縦方向の速度を0
-            }
+    // クラスメソッドとしてgameOverを定義
+    gameOver(taro, fruit) {
+        // ゲームオーバー時の処理
+        this.add.text(400, 200, 'GAME OVER', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+        this.physics.pause();
     }
+
+// 毎フレーム実行される繰り返し処理
+update(time, delta) {
+    // キーボードの情報を取得
+    let cursors = this.input.keyboard.createCursorKeys();
+
+    // 残り時間カウンターを減らす
+    this.timecount -= delta;
+
+    // 残り時間を画面に表示
+    this.timeText.setText('Time: ' + Math.ceil(this.timecount / 1000));
+
+    // 残り時間が0になったらゲームを停止
+    if (this.timecount <= 0) {
+        this.add.text(400, 200, 'TimeOver', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+        this.physics.pause();
+    }
+
+    // キー入力に応じた移動処理
+    if (cursors.up.isDown) {
+        this.taro.setVelocityY(-300); // 上方向の速度を設定
+        this.hanako.setVelocityY(300); // 上方向の速度を設定
+    } else if (cursors.down.isDown) {
+        this.taro.setVelocityY(300); // 下方向の速度を設定
+        this.hanako.setVelocityY(-300); // 下方向の速度を設定
+    } else if (cursors.left.isDown) {
+        this.taro.setVelocityX(-300); // 左方向の速度を設定
+        this.hanako.setVelocityX(300); // 左方向の速度を設定
+    } else if (cursors.right.isDown) {
+        this.taro.setVelocityX(300); // 右方向の速度を設定
+        this.hanako.setVelocityX(-300); // 右方向の速度を設定
+    } else {
+        this.taro.setVelocityX(0); // 横方向の速度を0
+        this.taro.setVelocityY(0); // 縦方向の速度を0
+        this.hanako.setVelocityX(0); // 横方向の速度を0
+        this.hanako.setVelocityY(0); // 縦方向の速度を0
+    }
+}
 }
